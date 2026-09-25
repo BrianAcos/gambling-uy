@@ -1,6 +1,7 @@
 const fs = require('fs');
 const history = JSON.parse(fs.readFileSync('historial.JSON'));
-const miJugada = [8, 13, 29, 45];
+const miJugada = [2, 9, 15, 25, 43]; // mi jugada de 5 de oro
+// const miJugada = [5, 10, 29, 34, 47]; // mi jugada de 5 de oro
 const numerosSalidos = {};
 
 function getNumberOfTimes(array) {
@@ -38,19 +39,23 @@ let fourOfTen = 0;
 let fiveOfTen = 0;
 let totalJugadas = 0;
 let dateFirst44to48 = new Date('2014-3-19');
+let ganaste = 'Nunca hubieras ganado el 5 de oro con tu jugada';
 
 const keys = Object.keys(history);
+const firstDate = new Date(keys[0]);
 
 keys
   // .reverse()
   .forEach((key) => {
-    if (dateFirst44to48 >= new Date(key)) return; // contar las jugadas a partir de la introduccion del 44 al 48
+    if (firstDate >= new Date(key)) return; // contar las jugadas a partir de la introduccion del 44 al 48
     // Ver si salio mi jugada
     const [orito, revancha] = history[key].oro || [[], []];
-    const saqueOro = miJugada.every((num) => orito.includes(num));
+    const saqueOro = miJugada.every((num) => orito.slice(0, -1).includes(num));
+    const saquePlata = !saqueOro && miJugada.every((num) => orito.includes(num));
     const saqueRevancha = miJugada.every((num) => revancha.includes(num));
-    if (saqueOro || saqueRevancha) {
-      console.log({saqueOro, saqueRevancha, dia: key});
+    if (saqueOro || saquePlata || saqueRevancha) {
+      console.log('Hubieras ganado!', { saqueOro, saquePlata, saqueRevancha, dia: key });
+      ganaste = `Hubieras ganado el 5 de oro con tu jugada, ${saqueOro ? 'en el oro' : saquePlata ? 'en la plata' : 'en la revancha'} el dia ${key}`;
     }
 
     // ver si salio un numero de cada 10 en cada jugada
@@ -101,12 +106,12 @@ const percentThree = (threeOfTen * 100) / totalJugadas;
 const percentFour = (fourOfTen * 100) / totalJugadas;
 const percentFive = (fiveOfTen * 100) / totalJugadas;
 
+console.log(ganaste);
 console.log(`Total de jugadas analizadas ${totalJugadas} (2 por sorteo)`);
 console.log(
-  `El numero que mas salio es el ${ordenados[ordenados.length - 1][1]}, ${
-    ordenados[ordenados.length - 1][0]
+  `El numero que mas salio es el ${ordenados[ordenados.length - 1][1]}, ${ordenados[ordenados.length - 1][0]
   } veces`,
 );
 
-console.log({percentOne, percentTwo, percentThree, percentFour, percentFive});
-console.log({dateFirst44to48});
+console.log({ percentOne, percentTwo, percentThree, percentFour, percentFive });
+console.log({ dateFirst44to48 });

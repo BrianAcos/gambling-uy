@@ -1,4 +1,3 @@
-global.fetch = require('node-fetch');
 const jsdom = require('jsdom');
 const fs = require('fs');
 
@@ -12,7 +11,7 @@ const actualYear = actualDate.getUTCFullYear().toString();
 
 function orderNumbers(array) {
   return array
-    .map((obj, idx) => ({num: obj.number, idx}))
+    .map((obj, idx) => ({ num: obj.number, idx }))
     .sort((a, b) => (a.idx % 2) - (b.idx % 2))
     .map((obj) => obj.num);
 }
@@ -23,7 +22,7 @@ async function getData() {
   let month = (nextDate.getUTCMonth() + 1).toString();
   let year = nextDate.getUTCFullYear().toString();
   let dateToAnalice = `${year}-${month}-${day}`;
-  let urlToAnalice = `https://loteria.gub.uy/ver_resultados.php?vdia=${day}&vmes=${month}&vano=${year}`;
+  let urlToAnalice = `https://www.loteria.gub.uy/ver_resultados.php?vdia=${day}&vmes=${month}&vano=${year}`;
   let isTotalUpdate =
     day === actualDay && month === actualMonth && year === actualYear;
 
@@ -47,7 +46,7 @@ async function getData() {
       if (isOro) {
         oro.push(number);
       } else if (number >= 0) {
-        quinelaAndTombola.push({element: elements[i], number});
+        quinelaAndTombola.push({ element: elements[i], number });
       }
     }
     const oroFinal = [oro.slice(0, 6), oro.slice(6, 11)];
@@ -60,12 +59,12 @@ async function getData() {
       quinelaAndTombola.length === 0
         ? 0
         : tombolaNocturna.length !== 0
-        ? 1
-        : quinelaVespertina[0].element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[0].innerHTML.includes(
+          ? 1
+          : quinelaVespertina[0].element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[0].innerHTML.includes(
             'VESPERTINA',
           )
-        ? 2
-        : 3;
+            ? 2
+            : 3;
     const data = {};
 
     if (oroFinal[0].length !== 0) data.oro = oroFinal;
@@ -89,13 +88,13 @@ async function getData() {
     }
 
     // todo: SET DATA 5 DE ORO QUINELA TOMBOLA
-    history[dateToAnalice] = {...data};
+    history[dateToAnalice] = { ...data };
     nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
     day = nextDate.getUTCDate().toString();
     month = (nextDate.getUTCMonth() + 1).toString();
     year = nextDate.getUTCFullYear().toString();
     dateToAnalice = `${year}-${month}-${day}`;
-    urlToAnalice = `https://loteria.gub.uy/ver_resultados.php?vdia=${day}&vmes=${month}&vano=${year}`;
+    urlToAnalice = `https://www.loteria.gub.uy/ver_resultados.php?vdia=${day}&vmes=${month}&vano=${year}`;
     isTotalUpdate =
       day === actualDay && month === actualMonth && year === actualYear;
     console.log('SETTED: ' + dateToAnalice);
